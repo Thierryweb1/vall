@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sharon, Be My Valentine 💖</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body, html { height:100%; font-family:'Arial', sans-serif; overflow:hidden; }
+
+  /* === CHANGE THESE TWO LINES FOR BACKGROUNDS === */
+  :root {
+    --main-bg: url('main-background.jpg');    /* <-- your main page background */
+    --yes-bg: url('yes-background.jpg');      /* <-- YES screen background */
+  }
+
+  body {
+    background: var(--main-bg) no-repeat center center/cover;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    color:white;
+  }
+
+  h1 {
+    font-size:1.6rem;
+    margin-bottom:25px;
+    color:#ff3366;
+    text-shadow: 0 0 5px #ff4d6d, 0 0 10px #ff66a3, 0 0 20px #ff3399;
+    animation: glow 1.5s ease-in-out infinite alternate;
+  }
+  @keyframes glow {
+    0% { text-shadow: 0 0 5px #ff4d6d,0 0 10px #ff66a3,0 0 20px #ff3399; }
+    100% { text-shadow: 0 0 15px #ff4d6d,0 0 25px #ff66a3,0 0 40px #ff3399; }
+  }
+
+  .card {
+    background: rgba(0,0,0,0.5);
+    padding: 35px 25px;
+    border-radius: 25px;
+    width: 90%;
+    max-width: 380px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    animation: pulse 2s infinite;
+    z-index:2;
+  }
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+  .buttons { position:relative; height:140px; }
+  button { padding:15px 28px; font-size:1.1rem; border:none; border-radius:30px; cursor:pointer; transition: transform 0.2s ease; }
+  #yes { background:#ff3366; color:white; animation: bounce 1.5s infinite; }
+  @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  #no { background:#ddd; position:absolute; }
+
+  .heart {
+    position:absolute;
+    font-size:20px;
+    color:rgba(255,0,100,0.9);
+    animation: floatUp linear infinite;
+    pointer-events:none;
+  }
+  @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity:1; } 100% { transform: translateY(-120vh) scale(1.5); opacity:0; } }
+
+  .yes-screen {
+    position:fixed;
+    inset:0;
+    background: var(--yes-bg) no-repeat center center/cover;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    color:white;
+    flex-direction:column;
+    overflow:hidden;
+    z-index:5;
+    animation: fadeIn 1s ease forwards;
+  }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+  .yes-message { animation: pop 0.8s ease; padding:20px; font-size:1.4rem; text-shadow:0 2px 6px rgba(0,0,0,0.5); }
+  @keyframes pop { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
+
+  .confetti { position:absolute; width:8px; height:8px; background:#ff3366; top:50%; left:50%; pointer-events:none; opacity:1; transform-origin:center; animation: confetti-fall linear forwards; }
+  @keyframes confetti-fall { 0% { transform: translate(0,0) rotate(0deg); opacity:1; } 100% { transform: translate(var(--x), var(--y)) rotate(var(--r)deg); opacity:0; } }
+
+  .love-letter { position: fixed; bottom:10%; background: rgba(255,255,255,0.9); color: #ff3366; padding:20px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.3); font-size:1rem; max-width:80%; text-align:center; animation: letterPop 1s ease; }
+  @keyframes letterPop { 0% { transform: scale(0.5); opacity:0; } 100% { transform: scale(1); opacity:1; } }
+
+</style>
+</head>
+<body>
+
+<audio id="bg-music" src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" loop></audio>
+
+<div class="card">
+  <h1>Sharon 💕<br>Will you be my Valentine?</h1>
+  <div class="buttons">
+    <button id="yes" onclick="yesClicked()">YES 💖</button>
+    <button id="no" ontouchstart="moveNo()" onmouseover="moveNo()">NO 😅</button>
+  </div>
+</div>
+
+<script>
+const music = document.getElementById('bg-music');
+window.addEventListener('click', ()=>music.play(), {once:true});
+
+// Floating hearts
+function createHeart() {
+  const heart = document.createElement("div");
+  heart.className="heart"; heart.innerHTML="💖";
+  heart.style.left = Math.random()*100 + "vw";
+  heart.style.animationDuration = (3+Math.random()*3)+"s";
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),6000);
+}
+setInterval(createHeart,300);
+
+// Move NO button
+function moveNo() {
+  const noBtn=document.getElementById("no");
+  const container=document.querySelector(".buttons");
+  const maxX=container.clientWidth-noBtn.offsetWidth;
+  const maxY=container.clientHeight-noBtn.offsetHeight;
+  noBtn.style.left=Math.random()*maxX+"px";
+  noBtn.style.top=Math.random()*maxY+"px";
+}
+
+// YES clicked
+function yesClicked() {
+  music.pause();
+  document.body.innerHTML = `
+    <div class="yes-screen">
+      <div class="yes-message">💖 Yay! 💖<br>Sharon, you just made my heart explode! 😍</div>
+    </div>`;
+  for(let i=0;i<100;i++){
+    const confetti=document.createElement("div"); confetti.className="confetti";
+    const x=(Math.random()-0.5)*200 + "vw";
+    const y=(Math.random()-0.5)*200 + "vh";
+    const r=Math.random()*720;
+    confetti.style.setProperty('--x',x);
+    confetti.style.setProperty('--y',y);
+    confetti.style.setProperty('--r',r);
+    confetti.style.animationDuration=(2+Math.random()*2)+"s";
+    document.body.appendChild(confetti);
+    setTimeout(()=>confetti.remove(),4000);
+  }
+  // Pop-up love letter
+  setTimeout(()=>{
+    const letter=document.createElement("div");
+    letter.className="love-letter";
+    letter.innerHTML="💌 Sharon, you make my world brighter every single day. 💕";
+    document.body.appendChild(letter);
+  },1500);
+}
+</script>
+</body>
+</html>
